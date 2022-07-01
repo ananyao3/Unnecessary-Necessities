@@ -1,0 +1,52 @@
+def look_say():
+  '''
+  Returns a look-say sequence with the starting number and length specified by 
+  the user
+  
+  look_say: None -> Str
+  
+  Examples:
+     look_say() => 1, 11, 21 
+     when the starting number is 1 and length of the sequence is 3
+     
+     look_say() => 3, 13, 1113, 3113, 132113
+     when the starting number is 3 and length of the sequence is 5
+  '''
+  
+  start_num = input("Please enter the start number of the look say sequence: ")
+  len_seq = int(input("Please enter how long you would like the look say sequence to be: "))
+  
+  seq_count = 1
+  num_lst = list(start_num)
+  val = ""
+  final_seq = str(start_num) + ", "
+  num = num_lst[0]
+  num_count = 0
+    
+  while (seq_count != len_seq):
+    for x in num_lst:
+      if (x == num):
+        num_count += 1
+        
+      else:
+        val += str(num_count) + num
+        num = x
+        num_count = 1
+      
+    val += str(num_count) + num
+    
+    if (seq_count + 1 == len_seq):
+      final_seq += val
+      
+    else:
+      final_seq += val + ", "
+      num_lst = list(str(val))
+      num = num_lst[0]
+      val = ""
+      num_count = 0
+      
+    seq_count += 1
+  
+  return final_seq
+    
+print(look_say())
