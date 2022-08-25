@@ -6,4 +6,5 @@ Introducing "Unnecessary Necessities", a collection of interesting programs that
 
 This collection includes:
 
-1. Look-say sequence 👀📣: https://en.wikipedia.org/wiki/Look-and-say_sequence
+1. Look-say sequence 👀📣 (Python): https://en.wikipedia.org/wiki/Look-and-say_sequence
+2. Hangman game🧍🏽(C)
