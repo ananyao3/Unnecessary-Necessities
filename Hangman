@@ -1,0 +1,200 @@
+#include <stdio.h>
+#include <assert.h>
+#include <string.h>
+#include <stdbool.h>
+#include "wordlist.h"
+
+/////////////////////////////////////////////////////////////////////
+// READ ONLY DATA
+
+// empty hangman stand
+const char empty[] = "   ____ \n  |    |\n  |     \n  |     \n  |     ";
+const char empty1[] = "\n  |     \n__|__   \n";
+
+// hangman stand with head
+const char head[] = "   ____ \n  |    |\n  |    😵 \n  |     \n  |     ";
+const char head1[] = "\n  |     \n__|__   \n";
+
+// hangman stand with head & neck
+const char neck[] = "   ____ \n  |    |\n  |    😵 \n  |    |\n  |      ";
+const char neck1[] = "\n  |     \n__|__   \n";
+
+// hangman stand with head, neck & left arm
+const char l_arm[] = "   ____ \n  |    |\n  |    😵 \n  |   /|\n  |     ";
+const char l_arm1[] = "\n  |     \n__|__   \n";
+
+// hangman stand with head, neck, left arm & right arm
+const char r_arm[] = "   ____  \n  |    | \n  |    😵 \n  |   /|\\\n  |     ";
+const char r_arm1[] = " \n  |      \n__|__    \n";
+
+// hangman stand with head, neck, left arm, right arm & left leg
+const char l_leg[] = "   ____  \n  |    | \n  |    😵 \n  |   /|\\\n  |   / ";
+const char l_leg1[] = " \n  |      \n__|__    \n";
+
+// hangman stand with full body
+const char full[] = "   ____  \n  |    | \n  |    😵 \n  |   /|\\\n  |   /";
+const char full1[] = " \\\n  |      \n__|__    \n";
+
+/////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////
+// GLOBAL DATA
+
+char name[100] = "hi";
+int wrong_guesses = 0;
+char *secret_word = "hi";
+char answer[100] = "hi";
+int word_num = -1;
+
+/////////////////////////////////////////////////////////////////////
+// HELPER FUNCTIONS
+
+void print_lines(char *secret_word) {
+  int len = strlen(secret_word);
+
+  printf("\n__");
+  for (int count = 0; count < len - 1; ++count) {
+    printf(" __");
+  }
+  printf("\n\n");
+}
+
+void print_word(char *secret_word, char answer) {
+  int len = strlen(secret_word);
+
+  printf("\n__");
+  for (int count = 0; count < len - 1; ++count) {
+    printf(" __");
+  }
+  printf("\n\n");
+}
+
+bool correct(char *secret_word) {
+  int len = strlen(secret_word);
+  int len_ans = strlen(answer);
+
+  if (len_ans != len) {
+    return false;
+  }
+
+  for (int i = 0; i < len; ++i) {
+    if (strcmp(answer, secret_word) != 0) {
+      return false;
+    }
+  } 
+  return true;
+}
+
+void stand(void) {
+  if (wrong_guesses == 1) {
+    printf("%s%s", head, head1);
+
+  } else if (wrong_guesses == 2) {
+    printf("%s%s", neck, neck1);
+
+  } else if (wrong_guesses == 3) {
+    printf("%s%s", l_arm, l_arm1);
+
+  } else if (wrong_guesses == 4) {
+    printf("%s%s", r_arm, r_arm1); 
+
+  } else if (wrong_guesses == 5) {
+    printf("%s%s", l_leg, l_leg1); 
+
+  } else if (wrong_guesses == 6) {
+    printf("%s%s", full, full1);
+  }
+}
+
+/////////////////////////////////////////////////////////////////////
+
+int main(void) {
+  // introduction & rules
+  printf("Welcome to the game of Hangman!\nWhat is your name?\n");
+  scanf("%s", name);
+  printf("\nHi %s! Hope you're ready to play a fun game of hangman.\n", name);
+  printf("Should I explain the rules? Type 'YES' or 'NO'\n");
+
+  bool ans = false;
+  scanf("%s", answer);
+
+  while (ans == false) {
+    if (strcmp(answer, "YES") == 0) {
+      printf("\nSo the main objective of hangman is to guess the word"); 
+      printf(" or phrase before your character gets hanged. Every time");
+      printf(" you guess a letter that is not in the word, another");
+      printf(" body part gets added to your character. If you form their");
+      printf(" body before guessing the word, you lose. Otherwise, you win.\n");
+      printf("\nLet's start the game!\n");
+      ans = true;
+    } else if (strcmp(answer, "NO") == 0) {
+      printf("\nLet's get right into the game then!\n");
+      ans = true;
+    } else {
+      printf("\nSorry, I did not receive a valid response.\n");
+      printf("Should I explain the rules? Type 'YES' or 'NO'\n");
+      scanf("%s", answer);
+    }
+  }
+
+  // randomizing the secret word
+  printf("Please enter a valid number between 0 and %d inclusive\n",
+         hangman_wordlist_len - 1);
+  scanf("%d", &word_num);
+
+  while (ans == true) {
+    if (word_num >= hangman_wordlist_len || word_num < 0) {
+      printf("You entered an invalid number.\n");
+      printf("Please enter a valid number between 0 and %d\n",
+             hangman_wordlist_len - 1);
+      scanf("%d", &word_num);
+    } else {
+      ans = false;
+      secret_word = hangman_wordlist[word_num];
+    }
+  }
+
+  // prints the length of the word in dashes
+  print_lines(secret_word);
+
+  // prints empty hangman stand
+  printf("%s%s", empty, empty1);
+  
+  // condition
+  while (ans == false && wrong_guesses < 7) {
+    printf("Enter a word:\n");
+    scanf("%s", answer);
+
+    int len = strlen(secret_word);
+    ans = correct(secret_word);
+
+    if (ans == false) {
+      if (answer[0] == secret_word[0]) {
+        printf("\n%c", secret_word[0]);
+      } else {
+        printf("\n__");
+      }
+
+      for (int i = 1; i < len; ++i) {
+        if (answer[i] == secret_word[i]) {
+          printf("  %c", secret_word[i]);
+        }
+
+        else {
+          printf(" __");
+        }
+      }
+    } printf("\n\n");
+    ++wrong_guesses;
+    stand();
+    printf("\n\n");
+  }
+
+  if (ans == true) {
+    printf("\nCongratulations! You won the game, thanks for playing!\n\n");
+  } else {
+    printf("\nOh no, the word was %s. Sorry, you didn't win the game.\n\n", 
+           hangman_wordlist[word_num]);
+  }
+}
